@@ -13,6 +13,20 @@ GET https://blockchain.info/multiaddr?active=3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd|
 ### single address end point
 GET https://blockchain.info/rawaddr/12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju
 
+
+###
+GET http://localhost:5000/api/address
+
+###
+POST http://localhost:5000/api/address
+content-type: application/json
+
+{
+    "address": "12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju",
+    "wallet_id": "c4c0bb91-5c1c-4ab7-acf5-7d65df97220c"
+}
+
+###
 user
 
 id

@@ -1,11 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 from sqlalchemy.dialects.mysql import BIGINT
 import uuid
 import bcrypt
 import json
 import time
-
-db = SQLAlchemy()
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -40,6 +38,20 @@ class Address(db.Model):
     last_synced_tx = db.Column(db.BigInteger, nullable=True)
     # Relationship with the Wallet model
     wallet = db.relationship('Wallet', backref=db.backref('addresses', lazy=True))
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+    
+     # Add the to_dict() method to convert model instance to a dictionary
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "address": self.address,
+            "wallet_id": self.wallet_id,
+            "curr_balance": self.curr_balance,
+            "last_synced_tx": self.last_synced_tx,
+        }
 
     def __repr__(self):
         return f"<Address id: {self.id} addr: {self.address} balance: {self.curr_balance}>"
