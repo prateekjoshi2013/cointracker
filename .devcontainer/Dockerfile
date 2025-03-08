@@ -4,9 +4,7 @@ FROM alpine:3.20
 # Install necessary packages and tools
 RUN apk add --no-cache bash curl git unzip nano make musl-utils musl-locales tzdata openssh python3 py3-pip && \ 
     python3 -m venv /venv && \
-    . /venv/bin/activate  && \
-    python3 /workspaces/cointtracker/mybtcwallet/seed.py
-
+    . /venv/bin/activate
 
 
 

@@ -38,10 +38,19 @@ tx
 
 id
 address-id
-from [string]
-to [string]
-tx_seq 
-timestamp
+from [{
+    address: string,
+    value: float
+}]
+to [{
+    address: string,
+    value: float
+}]
+tx_seq bigint
+fee float
+result float
+balance float
+timestamp epoch
 
 
 
