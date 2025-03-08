@@ -20,6 +20,7 @@ MarkupSafe==3.0.2
 mysql-connector-python==9.2.0
 prompt_toolkit==3.0.50
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 redis==5.2.1
 requests==2.32.3
 six==1.17.0
