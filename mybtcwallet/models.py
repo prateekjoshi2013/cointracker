@@ -16,7 +16,7 @@ def hash_password(password):
 # Models for the database schema
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: generate_uuid())
     firstname = db.Column(db.String(80), nullable=False)
     lastname = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -24,7 +24,7 @@ class User(db.Model):
 
 class Wallet(db.Model):
     __tablename__ = 'wallet'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: generate_uuid())
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     wallet = db.Column(db.String(255), nullable=False)  # Bitcoin wallet ID
 
@@ -33,11 +33,11 @@ class Wallet(db.Model):
 
 class Address(db.Model):
     __tablename__ = 'addresses'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: generate_uuid())
     address = db.Column(db.String(255), nullable=False)  # Bitcoin address
     wallet_id = db.Column(db.String(36), db.ForeignKey('wallet.id'), nullable=False)
-    curr_balance = db.Column(db.Float, nullable=False)  # Current balance for the Bitcoin address
-
+    curr_balance = db.Column(db.Float, default=None, nullable=True)  # Current balance for the Bitcoin address
+    last_synced_tx = db.Column(db.BigInteger, nullable=True)
     # Relationship with the Wallet model
     wallet = db.relationship('Wallet', backref=db.backref('addresses', lazy=True))
 
@@ -46,7 +46,7 @@ class Address(db.Model):
 
 class Transaction(db.Model):
     __tablename__ = 'tx'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: generate_uuid())
     address_id = db.Column(db.String(36), db.ForeignKey('addresses.id'), nullable=False)
     from_addresses = db.Column(db.JSON, nullable=False)  # List of {address: string, value: float}
     to_addresses = db.Column(db.JSON, nullable=False)  # List of {address: string, value: float}

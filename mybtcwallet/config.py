@@ -1,5 +1,7 @@
 import os
 
+CELERY_BROKER_URL = 'redis://myredis:6379/0'  # Redis as the broker
+CELERY_RESULT_BACKEND = 'redis://myredis:6379/0'
 DB_USER = os.getenv("MYSQL_USER", "prateek")
 DB_PASSWORD = os.getenv("MYSQL_PASSWORD", "root")
 DB_HOST = os.getenv("MYSQL_HOST", "mysqldb")

@@ -51,14 +51,16 @@ def seed_data():
         id=str(uuid.uuid4()),
         wallet_id=wallet1.id,
         address="12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju",  # Example Bitcoin address
-        curr_balance=0.5
+        curr_balance=None,
+        last_synced_tx=None,
     )
 
     address2 = Address(
         id=str(uuid.uuid4()),
         wallet_id=wallet1.id,
         address="bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5",  # Example Bitcoin address
-        curr_balance=0.5
+        curr_balance=None,
+        last_synced_tx=None,
     )
 
 
