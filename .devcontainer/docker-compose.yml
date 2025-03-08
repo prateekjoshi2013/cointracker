@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  devcontainer:
+    privileged: true
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      TESTCONTAINERS_HOST_OVERRIDE : host.docker.internal # needed for test container to be able to use host.docker.internal 
+    volumes:
+      - ../..:/workspaces:cached
+      - /venv
+      - /var/lib/docker # needed for docker in docker
+      - /var/run/docker.sock:/var/run/docker.sock # needed for docker in docker
+    networks:
+      - dev-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      myredis:
+        condition: service_healthy
+    command: sleep infinity
+
+  mysqldb:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: prateek
+      MYSQL_PASSWORD: root
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin  ping  -h  localhost --silent"]
+      interval: 20s
+      retries: 12
+      start_period: 30s
+      timeout: 120s
+    ports:
+      - 3306:3306  
+    networks:
+      - dev-network
+  
+  myredis:
+    image: redis:alpine3.21
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    driver: bridge
+
+volumes:
+  venv:
