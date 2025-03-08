@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import Address
-
+from extensions import db
 
 # Create a Blueprint
 address_bp = Blueprint("address", __name__)
@@ -15,19 +15,17 @@ def get_addresses():
 # POST endpoint to create a new address
 @address_bp.route("/address", methods=["POST"])
 def create_address():
-    try:
-        data = request.get_json()  # Parse the incoming JSON data
-        # Simple validation of the required fields
-        if not all(key in data for key in ["address", "wallet_id"]):
-            return jsonify({"error": "Missing one or more required fields"}), 400
-        print(data)
-        # Create a new address instance
-        new_address = Address(
-            address=data["address"],
-            wallet_id=data["wallet_id"],
-        )
+    data = request.get_json()  # Parse the incoming JSON data
+    # Simple validation of the required fields
+    if not all(key in data for key in ["address", "wallet_id"]):
+        return jsonify({"error": "Missing one or more required fields"}), 400
+    print(data)
+    # Create a new address instance
+    new_address = Address(
+        address=data["address"],
+        wallet_id=data["wallet_id"],
+    )
 
-        new_address.save()
-    except Exception as e:
-        print(e)
+    db.session.add(new_address)
+    db.session.commit()
     return jsonify({"message": "Address created successfully", "address": new_address.to_dict()}), 201
