@@ -13,18 +13,20 @@ GET https://blockchain.info/multiaddr?active=3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd|
 ### single address end point
 GET https://blockchain.info/rawaddr/12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju
 
+###
+GET http://localhost:5000/api/wallet
 
 ###
-GET http://localhost:5000/api/address
+GET http://localhost:5000/api/address/f23aad46-0b7f-4426-a9f9-4bd3b4328e8c
 
 ###
 POST http://localhost:5000/api/address
 content-type: application/json
 
 {
-    "address": "3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd",
-    "wallet_id": "822f7d58-4dbd-44fb-8367-feb222923eb9"
+    "address": "bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5",
+    "wallet_id": "78c4f483-b7e1-44ec-bc03-33322549f393"
 }
 
 ###
-GET http://localhost:5000/api/transactions?page=2&per_page=20
+GET http://localhost:5000/api/transactions/7e3a8c11-ff9c-4d04-b19f-436ae26ab17d?page=1&per_page=20

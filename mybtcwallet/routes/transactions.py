@@ -7,22 +7,11 @@ from sqlalchemy import text
 # Create a Blueprint
 transactions_bp = Blueprint("transactions", __name__)
 
-# Helper method to serialize transaction data (you can modify as needed)
-def transaction_to_dict(transaction):
-    return {
-        'id': transaction.id,
-        'address_id': transaction.address_id,
-        'from_addresses': transaction.from_addresses,
-        'to_addresses': transaction.to_addresses,
-        'fee': transaction.fee,
-        'result': transaction.result,
-        'balance': transaction.balance,
-        'timestamp': transaction.timestamp,
-    }
-
 # Paginated API to get transactions
-@transactions_bp.route('/transactions', methods=['GET'])
-def get_transactions():
+@transactions_bp.route('/transactions/<address_id>', methods=['GET'])
+def get_transactions(address_id):
+    if address_id is None:
+        return jsonify({"error": "address_id required"}), 404
     # Get pagination parameters from request (default: page 1, 10 records per page)
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -34,6 +23,7 @@ def get_transactions():
     # Get paginated transactions
     transactions = (
         session.query(Transaction)
+        .filter_by(address_id=address_id)
         .order_by(Transaction.timestamp.desc())  # Order by timestamp or any column
         .paginate(page=page, per_page=per_page, error_out=False)  # Pagination logic
     )
@@ -44,7 +34,7 @@ def get_transactions():
         'pages': transactions.pages,
         'current_page': transactions.page,
         'per_page': transactions.per_page,
-        'transactions': [transaction_to_dict(transaction) for transaction in transactions.items],
+        'transactions': [transaction.to_dict() for transaction in transactions.items],
     }
     
     # Close session after query

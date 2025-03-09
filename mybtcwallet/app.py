@@ -4,6 +4,7 @@ from extensions import db
 from sync import make_celery
 from routes.address import address_bp  # Import the Blueprint
 from routes.transactions import  transactions_bp
+from routes.wallet import  wallet_bp
 from seed import seed_data
 
 def create_app():
@@ -23,6 +24,7 @@ def create_app():
     celery.set_default() # to associate the task with flask
     app.register_blueprint(address_bp, url_prefix="/api")
     app.register_blueprint(transactions_bp, url_prefix="/api")
+    app.register_blueprint(wallet_bp, url_prefix="/api")
 
     with app.app_context():
             db.drop_all()
