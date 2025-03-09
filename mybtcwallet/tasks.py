@@ -99,17 +99,17 @@ def sync_tx_data(self):
                     "address_id": data['id'],
                     "from_addresses": [
                         {
-                            "addr" : inp["prev_out"]["addr"],
-                            "value" : inp["prev_out"]["value"],
+                            "addr" : inp["prev_out"]["addr"] if "addr" in inp["prev_out"] else None  ,
+                            "value" : inp["prev_out"]["value"] if "value" in inp["prev_out"] else None,
                         }
                         for inp in  tx["inputs"]  
                     ],
                     "to_addresses": [
                         {
-                            "addr" : out["addr"],
-                            "value" : out["value"],
+                            "addr" :  out["addr"] if "addr" in out else None ,
+                            "value" : out["value"] if "value" in out else None,
                         } 
-                        for out in tx["out"]  
+                        for out in tx["out"] 
                     ],
                     "fee": tx["fee"],
                     "result": tx["result"],

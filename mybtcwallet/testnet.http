@@ -27,46 +27,4 @@ content-type: application/json
 }
 
 ###
-user
-
-id
-firstname
-lastname
-email
-password
-
-wallet 
-
-user-id
-id 
-wallet
-
-addresses
-
-id
-address-id
-wallet-id
-curr_balance 
-
-tx
-
-id
-address-id
-from [{
-    address: string,
-    value: float
-}]
-to [{
-    address: string,
-    value: float
-}]
-tx_seq bigint
-fee float
-result float
-balance float
-timestamp epoch
-
-
-
-
-
+GET http://localhost:5000/api/transactions?page=2&per_page=20
