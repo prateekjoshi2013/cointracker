@@ -8,6 +8,6 @@ celery-beat:
 	. /venv/bin/activate && celery -A app.celery beat --loglevel=info
 
 run-app:
-	. /venv/bin/activate && flask run
+	. /venv/bin/activate && FLASK_DEBUG=1 FLASK_ENV=development FLASK_APP=app.py flask run
 
 

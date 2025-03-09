@@ -2,7 +2,7 @@ import os
 
 REDIS_HOST = os.getenv("REDIS_HOST", "myredis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
-REDIS_DB = os.getenv("REDIS_DB", "celery")
+REDIS_DB = os.getenv("REDIS_DB", 0)
 DB_USER = os.getenv("MYSQL_USER", "prateek")
 DB_PASSWORD = os.getenv("MYSQL_PASSWORD", "root")
 DB_HOST = os.getenv("MYSQL_HOST", "mysqldb")

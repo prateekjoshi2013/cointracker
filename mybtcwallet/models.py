@@ -32,16 +32,13 @@ class Wallet(db.Model):
 class Address(db.Model):
     __tablename__ = 'addresses'
     id = db.Column(db.String(36), primary_key=True, default=lambda: generate_uuid())
-    address = db.Column(db.String(255), nullable=False)  # Bitcoin address
+    address = db.Column(db.String(255), nullable=False, unique=True)  # Bitcoin address
     wallet_id = db.Column(db.String(36), db.ForeignKey('wallet.id'), nullable=False)
     curr_balance = db.Column(db.Float, default=None, nullable=True)  # Current balance for the Bitcoin address
     last_synced_tx = db.Column(db.BigInteger, nullable=True)
     # Relationship with the Wallet model
     wallet = db.relationship('Wallet', backref=db.backref('addresses', lazy=True))
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
     
      # Add the to_dict() method to convert model instance to a dictionary
     def to_dict(self):
@@ -62,11 +59,12 @@ class Transaction(db.Model):
     address_id = db.Column(db.String(36), db.ForeignKey('addresses.id'), nullable=False)
     from_addresses = db.Column(db.JSON, nullable=False)  # List of {address: string, value: float}
     to_addresses = db.Column(db.JSON, nullable=False)  # List of {address: string, value: float}
-    tx_seq = db.Column(db.BigInteger, nullable=False)
     fee = db.Column(db.Float, nullable=False)
     result = db.Column(db.Float, nullable=False)
     balance = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.BigInteger, nullable=False)  # Epoch timestamp
+    txid = db.Column(db.String(64), unique=True, nullable=False)  # Add this line to store txid
+
 
     # Relationship with the Address model
     address = db.relationship('Address', backref=db.backref('transactions', lazy=True))

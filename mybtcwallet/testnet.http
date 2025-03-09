@@ -1,6 +1,6 @@
 ###
 # Gives Current Balance of the address and the number of tx
-GET https://blockchain.info/balance?active=bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h
+GET https://blockchain.info/balance?active=12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju
 
 ###
 # Give Transactions for multiple addresses 
@@ -22,8 +22,8 @@ POST http://localhost:5000/api/address
 content-type: application/json
 
 {
-    "address": "12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju",
-    "wallet_id": "3ac7d4eb-702d-44a7-af43-92cbbc4bc92b"
+    "address": "3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd",
+    "wallet_id": "822f7d58-4dbd-44fb-8367-feb222923eb9"
 }
 
 ###
