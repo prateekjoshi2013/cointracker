@@ -5,6 +5,7 @@ from sync import make_celery
 from routes.address import address_bp  # Import the Blueprint
 from routes.transactions import  transactions_bp
 from routes.wallet import  wallet_bp
+from routes.health import  health_bp
 from seed import seed_data
 
 def create_app():
@@ -30,6 +31,7 @@ def create_app():
                 db.drop_all()
                 db.create_all()
                 seed_data()
+    app.register_blueprint(health_bp, url_prefix="/api")
     return app, celery
 
 

@@ -1,5 +1,6 @@
 from celery import Celery
 from celery.schedules import crontab
+from config import CELERY_BEAT_INTERVAL,CELERY_QUEUE
 
 def make_celery(app):
     celery = Celery(app.import_name)
@@ -8,10 +9,10 @@ def make_celery(app):
         imports=('tasks',)  # Explicitly import tasks
     )
     celery.conf.beat_schedule = {
-        "sync-every-5-min": {
+        f"sync-every-{CELERY_BEAT_INTERVAL}-min": {
             "task": "tasks.sync_tx_data",
-            "schedule": crontab(minute="*/2"),  # Run every 5 minutes
-            "options": {"queue": "sync_queue"},
+            "schedule": crontab(minute=f"*/{CELERY_BEAT_INTERVAL}"),  # Run every 2 minutes
+            "options": {"queue": f"{CELERY_QUEUE}"},
         },
     }
 

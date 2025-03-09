@@ -8,14 +8,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Step 4: Install the dependencies specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt update && \
+    apt install curl -y && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Step 5: Copy the entire app code into the container
 COPY . .
 
-# Step 7: Define the environment variable for Flask
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-# Step 8: Run the Flask application
-CMD 

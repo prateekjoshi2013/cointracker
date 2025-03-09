@@ -16,6 +16,7 @@ r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 LOCK_NAME = "sync_task_lock"
 LOCK_TIMEOUT = 300  # Lock timeout of 5 minutes
 BATCH_SIZE = 50
+OFFSET_LIMIT = 50000
 
 def find_unsynced_addresses():
     records = db.session.query(Address).with_entities(Address.address, Address.id).all()
@@ -45,9 +46,6 @@ def find_unsynced_addresses():
     
     addresses_to_sync = { id:data for id,data in db_count_map.items() if data['total_tx_count']-data['synced_tx_count']  }
     return addresses_to_sync
-    # Iterate through the results and print the address_id, latest timestamp, and transaction count
-    # for address_id, latest_timestamp, transaction_count in results:
-    #     if transaction_count 
         
 
 def insert_in_batches(records, batch_size=1000):
@@ -87,10 +85,10 @@ def sync_tx_data(self):
         addresses_to_sync=find_unsynced_addresses()
         print(addresses_to_sync)
         for address,data in addresses_to_sync.items():
-            remaining_tx = data['total_tx_count'] - data['synced_tx_count']
+            remaining_tx = min(data['total_tx_count'],OFFSET_LIMIT) - data['synced_tx_count']
             page_number = math.ceil(remaining_tx / 50)  # Round up to ensure you get the next set of records
-            offset = (page_number-1) * 50  # Correct offset calculation
-            print("-->",address,offset)
+            offset = min(((page_number-1) * 50),OFFSET_LIMIT)  # Correct offset calculation
+            print(f"syncing for address:{address} from offset: {offset} ")
             result=addresses_rawaddr(address,offset=offset)
             # filter out records based on last synced tx timestamp
             txs=[  
@@ -120,6 +118,12 @@ def sync_tx_data(self):
                 for tx in result['txs'] if tx["time"] > data['last_synced_ts']
             ]
             insert_in_batches(txs)
+            updates = [
+                {"id": data["id"], "curr_balance": data["curr_balance"]}
+            ]
+            # Perform bulk update of current balance
+            db.session.bulk_update_mappings(Address, updates)
+            db.session.commit()
         if time() - start_time > LOCK_TIMEOUT:
             print("Task timeout reached! Stopping execution.")
             raise SoftTimeLimitExceeded("Task exceeded the time limit")  # Raise exception to stop execution
