@@ -1,5 +1,6 @@
 import os
 
+APP_MODE = os.getenv("APP_MODE")
 REDIS_HOST = os.getenv("REDIS_HOST", "myredis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 REDIS_DB = os.getenv("REDIS_DB", 0)

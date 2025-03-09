@@ -25,11 +25,11 @@ def create_app():
     app.register_blueprint(address_bp, url_prefix="/api")
     app.register_blueprint(transactions_bp, url_prefix="/api")
     app.register_blueprint(wallet_bp, url_prefix="/api")
-
-    with app.app_context():
-            db.drop_all()
-            db.create_all()
-            seed_data()
+    if config.APP_MODE!="celery":
+        with app.app_context():
+                db.drop_all()
+                db.create_all()
+                seed_data()
     return app, celery
 
 

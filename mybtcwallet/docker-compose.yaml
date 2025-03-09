@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  mybtcwallet:
+    build: .
+    container_name: mybtcwallet
+    ports:
+      - "8000:8000"
+    environment:
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_RUN_PORT: 8000
+    volumes:
+      - .:/app
+    networks:
+      - mybtcwallet-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      myredis:
+        condition: service_healthy
+    command: flask run
+
+  celery-worker:
+    build: .
+    container_name: celery-worker
+    environment:
+      APP_MODE: celery
+    volumes:
+      - .:/app
+    networks:
+      - mybtcwallet-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      myredis:
+        condition: service_healthy
+    command: celery -A app.celery worker --loglevel=info --queues=sync_queue
+
+  celery-beat:
+    build: .
+    container_name: celery-beat
+    environment:
+      APP_MODE: celery
+    volumes:
+      - .:/app
+    networks:
+      - mybtcwallet-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      myredis:
+        condition: service_healthy
+    command: celery -A app.celery beat --loglevel=info
+
+  mysqldb:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: prateek
+      MYSQL_PASSWORD: root
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin  ping  -h  localhost --silent"]
+      interval: 20s
+      retries: 12
+      start_period: 30s
+      timeout: 120s
+    ports:
+      - 3306:3306  
+    networks:
+      - mybtcwallet-network
+  
+  myredis:
+    image: redis:alpine3.21
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+    networks:
+      - mybtcwallet-network
+
+
+
+# Define a network for the services to communicate
+networks:
+  mybtcwallet-network:
+    driver: bridge
